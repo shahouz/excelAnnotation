@@ -1,18 +1,24 @@
 package com.annotation.excel.utils;
 
 /**
- * 描述
+ * 字符串处理工具
  *
  * @author : tdl
  * @date : 2019/3/28 下午6:22
  **/
 public class StringUtil {
     public static boolean isBlank(String... args) {
-
         for (String arg : args) {
-            if (arg == null) continue;
-            if (arg.trim() == "" || arg.trim().equals("")) continue;
-            if ("null".equalsIgnoreCase(arg.trim())) continue;
+            if (arg == null) {
+                continue;
+            }
+            if (arg.trim() == "" || "".equals(arg.trim())) {
+                continue;
+            }
+            if ("null".equalsIgnoreCase(arg.trim())) {
+                continue;
+            }
+
             return false;
         }
 
@@ -22,8 +28,8 @@ public class StringUtil {
     /**
      * Object对象转换为字符串，如果对象为空，则返回空串，否则返回该对象转换的字符串
      *
-     * @param object object
-     * @return String
+     * @param object 被转换对象
+     * @return 转换后的字符串
      */
     public static String getObjectToString(Object object) {
         String str = "";

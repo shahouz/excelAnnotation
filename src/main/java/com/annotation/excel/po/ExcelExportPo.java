@@ -1,7 +1,5 @@
 package com.annotation.excel.po;
 
-import lombok.Data;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -12,7 +10,6 @@ import java.util.List;
  * @author : tdl
  * @date : 2019/3/28 下午5:24
  **/
-@Data
 public class ExcelExportPo {
     private HttpServletRequest request;
 
@@ -21,4 +18,36 @@ public class ExcelExportPo {
     private String excelName;
 
     private List<Object> list;
+
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
+    }
+
+    public String getExcelName() {
+        return excelName;
+    }
+
+    public void setExcelName(String excelName) {
+        this.excelName = excelName;
+    }
+
+    public List<Object> getList() {
+        return list;
+    }
+
+    public void setList(List<Object> list) {
+        this.list = list;
+    }
 }

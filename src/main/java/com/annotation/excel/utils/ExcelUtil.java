@@ -3,9 +3,6 @@ package com.annotation.excel.utils;
 import com.annotation.excel.annotation.Excel;
 import com.annotation.excel.constant.FileConstants;
 import com.annotation.excel.po.ExcelExportPo;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -24,24 +21,33 @@ import java.util.List;
  * @author : tdl
  * @date : 2019/3/25 下午6:42
  */
-@Slf4j
 public class ExcelUtil {
 
-    @Getter
     private Workbook workbook;
 
-    @Getter
-    @Setter
+    private Workbook getWorkbook() {
+        return workbook;
+    }
+
     private OutputStream os;
 
-    @Setter
-    @Getter
     private String pattern;
 
-    /**
-     * excel版本
-     */
-    private final static String EXCEL_VERSION_2003 = "2003";
+    private OutputStream getOs() {
+        return os;
+    }
+
+    private void setOs(OutputStream os) {
+        this.os = os;
+    }
+
+    private String getPattern() {
+        return pattern;
+    }
+
+    private void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
     private ExcelUtil(Workbook workboook) {
         this.workbook = workboook;
@@ -289,10 +295,8 @@ public class ExcelUtil {
             // 执行下载
             doDownload(response, filePath, fileName, file);
         } catch (IOException ie) {
-            log.error("Excel创建失败:", ie);
             throw ie;
         } catch (Exception e) {
-            log.error("Excel创建失败:", e);
             throw e;
         }
     }
@@ -304,9 +308,9 @@ public class ExcelUtil {
             // 响应下载请求
             DownloadUtil.downloadFile(response, inputStream, fileName);
         } catch (FileNotFoundException e) {
-            log.error("响应下载失败:", e);
+            e.printStackTrace();
         } catch (IOException e) {
-            log.error("响应下载失败:", e);
+            e.printStackTrace();
         } finally {
             if (file != null && file.exists()) {
                 file.delete();
