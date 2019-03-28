@@ -10,6 +10,14 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+# IDE
+.idea
+mvnw.cmd
+mvnw
+.mvn/
+excelAnnotation.iml
+target/
+
 # Package Files #
 *.jar
 *.war
