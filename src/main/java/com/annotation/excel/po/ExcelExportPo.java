@@ -19,6 +19,11 @@ public class ExcelExportPo {
 
     private List<Object> list;
 
+    /**
+     * 动态控制要显示的字段
+     */
+    private List<String> columnFilter;
+
     public HttpServletRequest getRequest() {
         return request;
     }
@@ -49,5 +54,13 @@ public class ExcelExportPo {
 
     public void setList(List<Object> list) {
         this.list = list;
+    }
+
+    public List<String> getColumnFilter() {
+        return columnFilter;
+    }
+
+    public void setColumnFilter(List<String> columnFilter) {
+        this.columnFilter = columnFilter;
     }
 }

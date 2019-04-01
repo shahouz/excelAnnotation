@@ -229,13 +229,15 @@ public class ExcelUtil {
         HttpServletResponse response = excelExportPo.getResponse();
         String excelName = excelExportPo.getExcelName();
         List<Object> list = excelExportPo.getList();
+        List<String> filter = excelExportPo.getColumnFilter();
 
+        File file = null;
         String filePath = request.getSession().getServletContext().getRealPath("/") + FileConstants.EXPORT_CACHE_FILE_PATH;
-        String fileName = excelName + FileConstants.EXPORT_FORMAT;
+        String fileName = excelName + FileConstants.EXPORT_FORMATE;
         try {
             checkDirExists(filePath);
             filePath = filePath + "/" + fileName;
-            File file = new File(filePath);
+            file = new File(filePath);
             if (!file.exists()) {
                 // 创建excel文档
                 Workbook workbook = new XSSFWorkbook();
@@ -250,35 +252,47 @@ public class ExcelUtil {
                 List<String> cellTypeList = new ArrayList<>();
                 // 解析excel数据
                 for (Integer i = 0; i < list.size(); i++) {
-                    Object object = list.get(0);
+                    Object object = list.get(i);
                     Class<?> cls = object.getClass();
                     Field[] fieldArray = cls.getDeclaredFields();
+
+                    // 设置标题行和列样式
                     if (i == 0) {
                         List<Object> titleList = new ArrayList<>();
-                        for (Integer index = 0; index < fieldArray.length; index++) {
-                            Field field = fieldArray[index];
+                        Integer index = 0;
+                        for (Field field : fieldArray) {
+                            if(!filter.contains(field.getName())) {
+                                continue;
+                            }
+
                             Excel column = field.getAnnotation(Excel.class);
                             if (column != null) {
                                 String columnTitle = column.title();
-                                String columnValueType = column.valueType();
+                                String columnValueType = StringUtils.isNotBlank(column.valueType()) ? column.valueType() : ExcelConstants.STRING_TYPE;
                                 Integer columnWidth = column.width();
                                 titleList.add(columnTitle);
                                 // 设置单元格宽度
                                 sheet.setColumnWidth(index, columnWidth);
                                 // 设置单元格数据类型
                                 cellTypeList.add(columnValueType);
+                                index++;
                             }
                         }
                         // 插入标题栏数据
                         rowData.add(titleList);
                     }
 
+                    // 设置数据行
                     List<Object> valueList = new ArrayList<>();
-                    for (Field field : fieldArray) {
-                        Excel column = field.getAnnotation(Excel.class);
-                        field.setAccessible(true);
-                        if (column != null) {
-                            valueList.add(field.get(object));
+                    for (Field field2 : fieldArray) {
+                        if(!filter.contains(field2.getName())) {
+                            continue;
+                        }
+
+                        Excel column2 = field2.getAnnotation(Excel.class);
+                        field2.setAccessible(true);
+                        if (column2 != null) {
+                            valueList.add(field2.get(object));
                         }
                     }
                     rowData.add(valueList);
@@ -293,24 +307,17 @@ public class ExcelUtil {
             }
 
             // 执行下载
-            doDownload(response, filePath, fileName, file);
-        } catch (IOException ie) {
-            throw ie;
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    private static void doDownload(HttpServletResponse response, String filePath, String fileName, File file) {
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(filePath);
+            InputStream inputStream = new FileInputStream(filePath);
             // 响应下载请求
             DownloadUtil.downloadFile(response, inputStream, fileName);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            //log.error("响应下载失败:", e);
+        } catch (IOException ie) {
+            //log.error("Excel创建失败:", ie);
+            throw ie;
+        } catch (Exception e) {
+            //log.error("Excel创建失败:", e);
+            throw e;
         } finally {
             if (file != null && file.exists()) {
                 file.delete();
